@@ -4,7 +4,7 @@ import './details.css';
 
 const Record = ({item, field, label})=>{
   return(
-        <li className="list-group-item">
+      <li className="list-group-item">
         <span className="term">{label}</span>
         <span>{item[field]}</span>
       </li>
@@ -61,7 +61,7 @@ export default class Details extends Component {
             <h4>{item.name}</h4>
             <ul className="list-group list-group-flush">
                 {
-                  React.Children.map(this.props.children, (child, idx)=>{
+                  React.Children.map(this.props.children, (child)=>{
                     return React.cloneElement(child, {item})
                   })
                 }  
