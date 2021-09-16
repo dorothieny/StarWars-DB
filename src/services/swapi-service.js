@@ -1,6 +1,7 @@
 class SwapiService {
 
-    _apiBase = 'https://swapi.dev/api'
+    _apiBase = 'https://swapi.dev/api';
+    _imgBase = 'https://starwars-visualguide.com/assets/img'
     async getResource(url){
         const res = await fetch(`${this._apiBase}${url}`);
         const body = await res.json();
@@ -9,40 +10,47 @@ class SwapiService {
         }
         return body;
     }
-    async getAllPeople(){
+    getAllPeople = async()=>{
         const res = await this.getResource(`/people/`);
-        return res.results;
+        return res.results.map((el)=> this._transformPerson(el));
     }
   
-    async getAllPlanets(){
+    getAllPlanets = async()=>{
       const res = await this.getResource(`/planets/`);
       return res.results.map((el)=> this._transformPlanet(el));
   }
-    async getAllStarships(){
+    getAllStarships = async()=>{
       const res = await this.getResource(`/starships/`);
-      return res.results;
+      return res.results.map((el)=> this._transformStarship(el));
     }
-  
-    async getPerson(id){
+    getPerson= async(id)=>{
       const person = await this.getResource(`/people/${id}`);
       return this._transformPerson(person)
     }
   
-    async getPlanet(id){
+    getPlanet= async(id)=>{
       const planet = await this.getResource(`/planets/${id}`);
       return this._transformPlanet(planet);
   }
-    async getStarship(id){
+    getStarship = async(id)=>{
       const ship = await this.getResource(`/starships/${id}`);
-      return this._transformPSpaceship(ship)
+      return this._transformStarship(ship);
     }
-
+    getPersonImg = (id)=>{
+      return `${this._imgBase}/characters/${id}.jpg`;
+    }
+    getPlanetImg = (id)=>{
+      return `${this._imgBase}/planets/${id}.jpg`;
+    }
+    getStarshipImg = (id)=>{
+      return `${this._imgBase}/starships/${id}.jpg`;
+    }
     extractId(item){
-      const idRegExp = /\/([0-9]*)\/$/;
+      const idRegExp = /([0-9]+)/;
       const id = item.url.match(idRegExp)[1];
       return id;
     }
-    _transformPlanet(planet){
+    _transformPlanet=(planet)=>{
       return({
         id: this.extractId(planet),
         name:planet.name,
@@ -51,27 +59,27 @@ class SwapiService {
         diameter: planet.diameter
       })
     }
-    _transformPerson(person){
+    _transformPerson=(person)=>{
       return({
         id: this.extractId(person),
         name:person.name,
         gender: person.gender,
-        birthYear: person.birthYear,
-        eyeColor: person.eyeColor
+        birthYear: person.birth_year,
+        eyeColor: person.eye_color
       })
     }
 
-    _transformPSpaceship(spaceship){
+    _transformStarship = (ship)=>{
       return({
-        id: this.extractId(spaceship),
-        name:spaceship.name,
-        model: spaceship.model,
-        manufacturer: spaceship.manufacturer,
-        costInCredits: spaceship.costInCredits,
-        length: spaceship.length,
-        crew: spaceship.crew,
-        passengers: spaceship.passengers,
-        cargoCapacity: spaceship.cargoCapacity
+        name:ship.name,
+        model: ship.model,
+        manufacturer: ship.manufacturer,
+        costInCredits: ship.cost_in_credits,
+        length: ship.length,
+        crew: ship.crew,
+        passengers: ship.passengers,
+        cargoCapacity: ship.cargo_capacity,
+        id: this.extractId(ship),
       })
     }
   }
